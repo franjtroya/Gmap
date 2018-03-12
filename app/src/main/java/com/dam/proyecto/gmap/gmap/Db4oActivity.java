@@ -1,5 +1,6 @@
 package com.dam.proyecto.gmap.gmap;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,9 +46,14 @@ public class Db4oActivity extends AppCompatActivity {
                         datePicker.getDayOfMonth()).getTime();
                 ArrayList<Localizacion> queryByDate = queryByDate(fechaConsulta);
                 if(queryByDate.size() > 0){
-                    lblDatePicker.setText("Esta fecha está disponible");
+                    lblDatePicker.setText("Hay registros disponibles");
+                    Intent i = new Intent(Db4oActivity.this, MapsActivity.class);
+                    Bundle b = new Bundle();
+                    b.putParcelableArrayList("locations", queryByDate);
+                    i.putExtras(b);
+                    startActivity(i);
                 } else {
-                    lblDatePicker.setText("Esta fecha NO esta disponible");
+                    lblDatePicker.setText("NO hay registros para esa fecha");
                 }
             }
         });

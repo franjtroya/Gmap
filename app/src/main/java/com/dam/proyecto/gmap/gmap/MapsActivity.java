@@ -7,6 +7,7 @@ package com.dam.proyecto.gmap.gmap;
  TODO: 3º poder ver -> Polyline for GLocation history on db4o
  */
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -19,14 +20,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private ArrayList<Localizacion> locs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        locs = new ArrayList<>();
+        Intent iquery = getIntent();
+        locs = iquery.getParcelableArrayListExtra("locations");
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -51,12 +58,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        LatLng granada = new LatLng(-37.1608, -3.5911);
 //        mMap.addMarker(new MarkerOptions().position(granada).title("Marker in Granada"));
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(granada));
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(granada));
-//        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
-        Polyline polyLinea = googleMap.addPolyline(new PolylineOptions()
-                .add(new LatLng(37.1608, -3.5911),
-                        new LatLng(37.1618, -3.5911),
-                        new LatLng(37.1620, -3.5926),
-                        new LatLng(37.1628, -3.5926)));
+
+        PolylineOptions polylineOptions = new PolylineOptions();
+        LatLng alatlng;
+        for (Localizacion l :locs) {
+            alatlng = new LatLng(l.getLocalizacion().getLatitude(), l.getLocalizacion().getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(alatlng));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
+            polylineOptions.add(alatlng);
+        }
+        Polyline polyLinea = googleMap.addPolyline(polylineOptions);
     }
 }
